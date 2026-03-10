@@ -389,6 +389,8 @@ impl Client {
             .await?
             .error_for_status()?;
 
+        trace!("Request made");
+
         let resp_json = match async_resp {
             Some(rx) => {
                 let sleep = tokio::time::sleep(self.config.async_timeout);
