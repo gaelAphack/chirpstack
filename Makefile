@@ -3,7 +3,7 @@
 # Build distributable binaries.
 dist:
 	cd api && make grpc-web
-	cd chirpstack && make dist
+	cd chirpstack && make build-rasp
 
 # Install dev dependencies
 dev-dependencies:
