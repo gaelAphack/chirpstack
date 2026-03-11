@@ -46,6 +46,7 @@ dist:
 
 build-rasp:
 	cross build --target armv7-unknown-linux-musleabihf --release --no-default-features --features="$(DATABASE)"
+	cargo deb --target armv7-unknown-linux-musleabihf --no-build --no-strip $(VARIANT_FLAGS)
 
 test:
 	cargo fmt --check
