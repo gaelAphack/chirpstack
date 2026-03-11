@@ -1,0 +1,26 @@
+# Stage 1: Build the UI (Requirements: Node.js/Make)
+FROM node:18 AS ui-builder
+WORKDIR /src
+COPY . .
+# Following README: Building the UI
+RUN make build-ui
+
+# Stage 2: Build the Binary (Requirements: Rust/Cargo/Make)
+FROM rust:1.70 AS binary-builder
+WORKDIR /src
+COPY --from=ui-builder /src .
+# Following README: Install dev dependencies
+RUN make dev-dependencies
+# Following README: Build release (Forced to ARMv7 via Buildx)
+# Note: Use 'make release-amd64' or similar tailored for your specific target
+RUN cd ./chirpstack && make build-rasp
+
+# Stage 3: Final Runtime Image
+FROM debian:bullseye-slim
+WORKDIR /opt/chirpstack
+COPY --from=binary-builder /src/target/release/chirpstack .
+# Add necessary runtime libs
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["./chirpstack"]
+

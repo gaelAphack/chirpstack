@@ -1,35 +1,9 @@
-# Stage 1: Build the UI (Cross-platform)
-FROM --platform=$BUILDPLATFORM node:18-alpine AS ui-builder
-WORKDIR /usr/src/chirpstack/ui
-COPY ui/package.json ui/package-lock.json ./
-RUN npm install
-COPY ui .
-RUN npm run build
+FROM nixos/nix
 
-# Stage 2: Build the Rust Binary for ARMv7
-FROM rust:1.75-bookworm AS rust-builder
-# Install cross-compilation tools for ARMv7
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
-    gcc-arm-linux-gnueabihf \
-    libc6-dev-armhf-cross
 
-ENV CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc
-RUN rustup target add armv7-unknown-linux-gnueabihf
+ENV PROJECT_PATH=/chirpstack
 
-WORKDIR /usr/src/chirpstack
-COPY . .
-COPY --from=ui-builder /usr/src/chirpstack/ui/build ./ui/build
+WORKDIR $PROJECT_PATH
 
-# Build specifically for the Raspberry Pi 3B architecture
-RUN cargo build --release --target armv7-unknown-linux-gnueabihf
 
-# Stage 3: Final Lightweight Image
-FROM alpine:3.23.3
-RUN apk --no-cache add ca-certificates libgcc
-WORKDIR /usr/bin/
-# Copy the ARMv7 binary
-COPY --from=rust-builder /usr/src/chirpstack/target/armv7-unknown-linux-gnueabihf/release/chirpstack .
-USER nobody:nogroup
-ENTRYPOINT ["/usr/bin/chirpstack"]
+ENTRYPOINT ["nix-shell"]

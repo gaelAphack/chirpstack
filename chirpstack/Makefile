@@ -44,6 +44,9 @@ dist:
 	tar -czvf ../dist/chirpstack_$(PKG_VERSION)_$(DATABASE)_armv7hf.tar.gz -C ../target/armv7-unknown-linux-musleabihf/release chirpstack
 	tar -czvf ../dist/chirpstack_$(PKG_VERSION)_$(DATABASE)_arm64.tar.gz -C ../target/aarch64-unknown-linux-musl/release chirpstack
 
+build-rasp:
+	cross build --target armv7-unknown-linux-musleabihf --release --no-default-features --features="$(DATABASE)"
+
 test:
 	cargo fmt --check
 	cargo clippy --no-deps --no-default-features --features="$(DATABASE)"
