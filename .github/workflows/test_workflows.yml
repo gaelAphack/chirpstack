@@ -68,4 +68,4 @@ jobs:
       - name: Install dev dependencies
         run: nix-shell --command "make dev-dependencies"
       - name: Build distributables
-        run: nix-shell --command "make build-rasp"
+        run: nix-shell --command "make dist"
