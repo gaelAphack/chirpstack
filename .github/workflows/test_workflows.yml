@@ -24,7 +24,7 @@ jobs:
         with:
           registry: ghcr.io
           username: gaelAphack
-          password: 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
+          password: ${{ secrets.CHIRPSTACK_SECRET }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
