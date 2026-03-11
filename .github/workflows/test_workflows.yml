@@ -10,16 +10,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: gaelAphack
-          password: 78377cv58ub7jj7
+          password: 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
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -29,3 +34,5 @@ jobs:
           platforms: linux/arm/v7
           push: true
           tags: ghcr.io/gaelAphack/chirpstack:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
