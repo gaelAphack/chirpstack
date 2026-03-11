@@ -1,6 +1,7 @@
 # Stage 1: Build the UI (Requirements: Node.js/Make)
 FROM node:18 AS ui-builder
 WORKDIR /src
+RUN npm install -g pnpm
 COPY . .
 # Following README: Building the UI
 RUN make build-ui
