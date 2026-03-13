@@ -3,11 +3,19 @@ FROM ghcr.io/cross-rs/armv7-unknown-linux-musleabihf:main
 RUN apt-get update && \
   apt-get --assume-yes install \
   protobuf-compiler \
-  libprotobuf-dev && \
-  apt-get install -y zlib1g-dev
+  libprotobuf-dev
 
 ENV MUSL_PREFIX=arm-linux-musleabihf
 ENV SQLITE_VERSION=3490100
+ENV ZLIB_VERSION=1.3.1
+
+RUN echo "Building zlib" && \
+  cd /tmp && \
+  curl -fLO "https://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
+  tar xvzf "zlib-$ZLIB_VERSION.tar.gz" && cd "zlib-$ZLIB_VERSION" && \
+  CC=$MUSL_PREFIX-gcc AR=$MUSL_PREFIX-ar RANLIB=$MUSL_PREFIX-ranlib \
+  ./configure --static --prefix=/usr/local/$MUSL_PREFIX-target && \
+  make && make install && rm -r /tmp/*
 
 RUN echo "Building SQLite" && \
   cd /tmp && \
