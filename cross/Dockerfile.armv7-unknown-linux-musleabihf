@@ -11,9 +11,8 @@ ENV SQLITE_VERSION=3490100
 RUN echo "Building SQLite" && \
   cd /tmp && \
   curl -fLO "https://sqlite.org/2025/sqlite-autoconf-$SQLITE_VERSION.tar.gz" && \
-  tar xvzf "sqlite-autoconf-$SQLITE_VERSION.tar.gz" && cd "sqlite-autoconf-$SQLITE_VERSION"
-
-RUN env CC=$MUSL_PREFIX-gcc ./configure --host=arm-linux --enable-static --prefix=/usr/local/$MUSL_PREFIX-target
+  tar xvzf "sqlite-autoconf-$SQLITE_VERSION.tar.gz" && cd "sqlite-autoconf-$SQLITE_VERSION" && \
+  env CC=$MUSL_PREFIX-gcc ./configure --host=arm-linux --enable-static --prefix=/usr/local/$MUSL_PREFIX-target
 RUN make && make install && \
   rm -r /tmp/*
 
